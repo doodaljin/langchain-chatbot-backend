@@ -106,6 +106,7 @@ module.exports = ({ chatapi }) => ({
       // will add code here to log our chat history to the database
       await logInitialChat(sessionId, strapi);
       const response = await getResponse(newSession, newSession.initialPrompt);
+      response.sessionId = sessionId;
       return response;
     } else {
       const session = await sessionManager.getSession(sessionId);
@@ -114,6 +115,9 @@ module.exports = ({ chatapi }) => ({
 
       // will add code here to update our chat history to the database
       await updateExistingChat(sessionId, history, strapi);
+      response.sessionId = sessionId;
+      response.history = history.messages;
+      await sessionManager.showAllSessions();
       return response;
     }
   },

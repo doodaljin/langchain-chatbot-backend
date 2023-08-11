@@ -14,7 +14,9 @@
     "@strapi/plugin-i18n": "4.12.1",
     "@strapi/plugin-users-permissions": "4.12.1",
     "@strapi/strapi": "4.12.1",
+    "axios": "^1.4.0",
     "better-sqlite3": "8.5.0",
+    "cheerio": "^1.0.0-rc.12",
     "langchain": "^0.0.122"
   },
   "author": {

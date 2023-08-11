@@ -4,37 +4,31 @@
  * chat-api service
  */
 const sessionManager = require("../sessionManager");
-const { BufferMemory } = require("langchain/memory");
-const { ConversationChain } = require("langchain/chains");
 const { PromptTemplate } = require("langchain/prompts");
 const { v4: uuidv4 } = require("uuid");
 const { SerpAPI } = require("langchain/tools");
 const { ChatOpenAI } = require("langchain/chat_models/openai");
 const { initializeAgentExecutorWithOptions } = require("langchain/agents");
+const { OpenAIEmbeddings } = require("langchain/embeddings/openai");
+const { WebBrowser } = require("langchain/tools/webbrowser");
 
 function configureLangChainChat(apiKey) {
-  const memory = new BufferMemory();
   const model = new ChatOpenAI({
     openAIApiKey: apiKey,
     modelName: "gpt-3.5-turbo",
     temperature: 0.7,
   });
-
-  const chain = new ConversationChain({
-    llm: model,
-    memory: memory,
-  });
-
+  const embeddings = new OpenAIEmbeddings();
   const tools = [
     new SerpAPI(process.env.SERPAPI_API_KEY, {
       location: "Ho Chi Minh City,Ho Chi Minh City,Vietnam",
       hl: "vi",
       gl: "vn",
-    })];
+    }),
+    new WebBrowser({model, embeddings}),
+  ];
 
   return {
-    chain: chain,
-    memory: memory,
     model: model,
     tools: tools,
   };
@@ -44,12 +38,7 @@ async function generateSession(apiKey) {
   const sessionId = uuidv4();
 
   const template = `
-      system: Your name is {input}, you are playing a human character who is witty, snarky and very smart.
-      Directions: 
-        Always respond in character.
-        If something is not clear, ask for clarification.
-        If you are stuck, ask for help.
-        Ask questions to learn more about the topic and conversation.`;
+      system: Your name is {input}, say hello and introduce about yourself.`;
 
   const initializedPrompt = new PromptTemplate({
     template,
@@ -61,6 +50,14 @@ async function generateSession(apiKey) {
   const executor = await initializeAgentExecutorWithOptions(langChain.tools, langChain.model, {
     agentType: "chat-conversational-react-description",
     verbose: true,
+    agentArgs: {
+      systemMessage:
+      `You are a human assistant who is knowledgable, witty and very smart.
+      Directions: 
+        Always respond in character.
+        If something is not clear or you are stuck, using search tool to look up information before answer or ask for clarification.
+        Ask questions to learn more about the topic and conversation.`,
+      }
   });
   await sessionManager.saveSession(sessionId, executor, initialPrompt);
   return sessionId;

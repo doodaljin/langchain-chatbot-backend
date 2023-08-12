@@ -1,57 +1,41 @@
-# 🚀 Getting started with Strapi
+# Langchain Chatbot Backend
 
-Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/developer-docs/latest/developer-resources/cli/CLI.html) (CLI) which lets you scaffold and manage your project in seconds.
+This is the backend for a chatbot project built with Langchain and GPT.
+## Prepare
 
-### `develop`
+Add a .env file like .env.example then add your own OpenAI API Key and SERP API Key to it. 
 
-Start your Strapi application with autoReload enabled. [Learn more](https://docs.strapi.io/developer-docs/latest/developer-resources/cli/CLI.html#strapi-develop)
+## Run in terminal
 
+### Install required packages
 ```
-npm run develop
-# or
+yarn install
+```
+### Start backend server with autoReload enabled
+```
 yarn develop
 ```
+## Run with Docker
 
-### `start`
-
-Start your Strapi application with autoReload disabled. [Learn more](https://docs.strapi.io/developer-docs/latest/developer-resources/cli/CLI.html#strapi-start)
+### Build image
+```
+docker build -t backend:1.0 .
+```
+### Run a container for backend
 
 ```
-npm run start
-# or
-yarn start
+docker run -d -p 1337:1337 --name backend backend:1.0
 ```
+## ⚙️ Setting your Backend API
 
-### `build`
+Access to the backend main page and create your first admin account then proceed to admin page. <br>
+In the Setting, choose Roles and in the Public role, enable Select all in Chat and Chat-api. <br>
+In the Setting, choose API Tokens and generate a token for using in [Frontend](https://github.com/doodaljin/langchain-chatbot-frontend.git), remember to enable Select all in Chat and Chat-api too. 
 
-Build your admin panel. [Learn more](https://docs.strapi.io/developer-docs/latest/developer-resources/cli/CLI.html#strapi-build)
-
-```
-npm run build
-# or
-yarn build
-```
-
-## ⚙️ Deployment
-
-Strapi gives you many possible deployment options for your project. Find the one that suits you on the [deployment section of the documentation](https://docs.strapi.io/developer-docs/latest/setup-deployment-guides/deployment.html).
-
-## 📚 Learn more
+## 📚 Learn more about Strapi
 
 - [Resource center](https://strapi.io/resource-center) - Strapi resource center.
 - [Strapi documentation](https://docs.strapi.io) - Official Strapi documentation.
 - [Strapi tutorials](https://strapi.io/tutorials) - List of tutorials made by the core team and the community.
 - [Strapi blog](https://docs.strapi.io) - Official Strapi blog containing articles made by the Strapi team and the community.
 - [Changelog](https://strapi.io/changelog) - Find out about the Strapi product updates, new features and general improvements.
-
-Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/strapi). Your feedback and contributions are welcome!
-
-## ✨ Community
-
-- [Discord](https://discord.strapi.io) - Come chat with the Strapi community including the core team.
-- [Forum](https://forum.strapi.io/) - Place to discuss, ask questions and find answers, show your Strapi project and get feedback or just talk with other Community members.
-- [Awesome Strapi](https://github.com/strapi/awesome-strapi) - A curated list of awesome things related to Strapi.
-
----
-
-<sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>

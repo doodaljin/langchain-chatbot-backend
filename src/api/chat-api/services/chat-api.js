@@ -11,6 +11,11 @@ const { ChatOpenAI } = require("langchain/chat_models/openai");
 const { initializeAgentExecutorWithOptions } = require("langchain/agents");
 const { OpenAIEmbeddings } = require("langchain/embeddings/openai");
 const { WebBrowser } = require("langchain/tools/webbrowser");
+const { OpenAI } = require("openai");
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const { DynamicTool } = require("langchain/tools");
 
 function configureLangChainChat(apiKey) {
   const model = new ChatOpenAI({
@@ -18,6 +23,20 @@ function configureLangChainChat(apiKey) {
     modelName: "gpt-3.5-turbo",
     temperature: 0.7,
   });
+  const DallETool = new DynamicTool({
+    name: "Dall-E Api",
+    description: "use this tool when user needs to create an image. input should be the description of the image. response should be the whole url of the image.",
+    func: async (input) => {
+      const response = await openai.images.generate({
+        prompt: input,
+        n: 1,
+        size: "256x256",
+      });
+      const image_url = response.data[0].url;
+      console.log(image_url);
+      return "Here the whole url of the generated image: " + image_url;
+    }
+  })
   const embeddings = new OpenAIEmbeddings();
   const tools = [
     new SerpAPI(process.env.SERPAPI_API_KEY, {
@@ -25,7 +44,8 @@ function configureLangChainChat(apiKey) {
       hl: "vi",
       gl: "vn",
     }),
-    new WebBrowser({model, embeddings}),
+    new WebBrowser({ model, embeddings }),
+    DallETool, 
   ];
 
   return {
@@ -52,12 +72,12 @@ async function generateSession(apiKey) {
     verbose: true,
     agentArgs: {
       systemMessage:
-      `You are a human assistant who is knowledgable, witty and very smart.
+        `You are a human assistant who is knowledgable, witty and very smart.
       Directions: 
         Always respond in character.
         If something is not clear or you are stuck, using search tool to look up information before answer or ask for clarification.
         Ask questions to learn more about the topic and conversation.`,
-      }
+    }
   });
   await sessionManager.saveSession(sessionId, executor, initialPrompt);
   return sessionId;

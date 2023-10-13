@@ -25,7 +25,7 @@ function configureLangChainChat(apiKey) {
   });
   const DallETool = new DynamicTool({
     name: "Dall-E Api",
-    description: "use this tool when user needs to create an image. input should be the description of the image. response should be the whole url of the image.",
+    description: "use this tool when user needs to create an image. input should be the description of the image. response should be the whole url of the image and it must not be modified.",
     func: async (input) => {
       const response = await openai.images.generate({
         prompt: input,
@@ -76,7 +76,8 @@ async function generateSession(apiKey) {
       Directions: 
         Always respond in character.
         If something is not clear or you are stuck, using search tool to look up information before answer or ask for clarification.
-        Ask questions to learn more about the topic and conversation.`,
+        Ask questions to learn more about the topic and conversation.
+        If the response contains an url, the url must not be modified in anyway.`,
     }
   });
   await sessionManager.saveSession(sessionId, executor, initialPrompt);

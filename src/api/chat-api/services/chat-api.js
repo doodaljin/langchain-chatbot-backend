@@ -30,7 +30,7 @@ function configureLangChainChat(apiKey) {
       const response = await openai.images.generate({
         prompt: input,
         n: 1,
-        size: "256x256",
+        size: "512x512",
       });
       const image_url = response.data[0].url;
       console.log(image_url);
